@@ -1,0 +1,10 @@
+_make ARG:
+    mkdir -p build chipdb
+    nix develop github:openxc7/toolchain-nix --command make {{ARG}}
+
+build: (_make "build")
+
+flash: (_make "flash")
+
+clean:
+	rm -rf build/
