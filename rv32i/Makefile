@@ -1,2 +1,2 @@
-PROGRAM = led_blink
+PROGRAM = rv32i
 include ../general.mk
