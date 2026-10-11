@@ -1,2 +1,2 @@
-PROGRAM = led_blink
+PROGRAM_NAME = led_blink
 include ../general.mk
