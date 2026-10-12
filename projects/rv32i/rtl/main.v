@@ -1,9 +1,12 @@
-module main (input wire clk, output wire led);
-    reg [31:0] x [31:0];
+module top (
+    input  wire clk,
+    output wire led
+);
+    reg [31:0] x  [31:0];
     reg [31:0] pc;
 
     always @(posedge clk) begin
-       // Ensure that x[0] is always 0.
+        // Ensure that x[0] is always 0.
     end
 endmodule
 

@@ -1,12 +1,14 @@
 `timescale 1 ns / 1 ps
 
-module main (
-    input clk,
-    output reg led
+`define FIRMWARE_FILE "../firmware.hex"
+
+module top (
+    input wire CLK100MHZ,
+    output wire [15:0] LED
 );
     reg  [3:0] reset_count = 4'b0000;
     wire       resetn = reset_count[3];
-    always @(posedge clk) begin
+    always @(posedge CLK100MHZ) begin
 
         if (!reset_count[3]) reset_count <= reset_count + 1'b1;
     end
@@ -23,7 +25,7 @@ module main (
     reg  [31:0] rom       [0:1023];
 
     initial begin
-        $readmemh("firmware.hex", rom);
+        $readmemh(`FIRMWARE_FILE, rom);
     end
 
     assign mem_ready = mem_valid;
@@ -32,9 +34,9 @@ module main (
         mem_rdata = rom[mem_addr[11:2]];
     end
 
-    always @(posedge clk) begin
+    always @(posedge CLK100MHZ) begin
         if (resetn && mem_valid && mem_ready && mem_addr == 32'h10000000 && |mem_wstrb) begin
-            led <= mem_wdata[0];
+            LED[0] <= mem_wdata[0];
         end
     end
 
