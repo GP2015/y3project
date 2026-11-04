@@ -1,0 +1,10 @@
+[package]
+name = "led_inc"
+version = "0.1.0"
+edition.workspace = true
+
+[[bin]]
+name = "led_inc"
+harness = false
+
+[dependencies]

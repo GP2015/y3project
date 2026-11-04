@@ -1,0 +1,14 @@
+[workspace]
+resolver = "3"
+members = ["firmware/led_inc", "firmware/whackamole", "firmware/mic_level"]
+
+[workspace.package]
+edition = "2024"
+
+[workspace.dependencies]
+fastrand = { version = "2.5.0", default-features = false }
+num-traits = { version = "0.2.19", default-features = false }
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
