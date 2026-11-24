@@ -49,12 +49,12 @@ impl<T: PrimInt> MmioReg<T> {
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
     let mut leds = MmioReg::new(0x1000_0000 as *mut u16);
-    let mic = MmioReg::new(0x1000_0200 as *mut u32);
+    let mic = MmioReg::new(0x1000_0200 as *mut i32);
 
     loop {
         let mic_read = mic.read();
 
-        let lights_lit = mic_read * 15 / 256;
+        let lights_lit = (mic_read + 128) as usize * 15 / 256;
 
         let led_out = if lights_lit >= 15 {
             0xFFFF
