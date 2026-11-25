@@ -1,17 +1,22 @@
 [workspace]
 resolver = "3"
 members = [
+    "firmware/common",
     "firmware/led_inc",
-    "firmware/whackamole",
-    "firmware/mic_level",
-    "firmware/mic_record",
+    "firmware/switches",
+    "firmware/pitch",
 ]
 
 [workspace.package]
 edition = "2024"
 
+[workspace.lints.clippy]
+pedantic = "warn"
+nursery = "warn"
+todo = "warn"
+
 [workspace.dependencies]
-fastrand = { version = "2.5.0", default-features = false }
+common = { path = "firmware/common" }
 num-traits = { version = "0.2.19", default-features = false }
 
 [profile.release]

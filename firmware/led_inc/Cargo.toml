@@ -7,4 +7,8 @@ edition.workspace = true
 name = "led_inc"
 harness = false
 
+[lints]
+workspace = true
+
 [dependencies]
+common.workspace = true
