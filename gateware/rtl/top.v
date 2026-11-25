@@ -58,7 +58,7 @@ module top (
         .ENABLE_TRACE(0),
 
         .PROGADDR_RESET(32'h0000_0000),
-        .STACKADDR(32'h001F_FFFC)
+        .STACKADDR(32'h0003_FFFC)
     ) cpu (
         .trap(trap),
 
