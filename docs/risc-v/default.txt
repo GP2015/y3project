@@ -1,6 +1,0 @@
-Registers:
-- 32 bits wide each
-- 32 general-purpose registers (labelled x0 through x31)
-- 1 stack pointer register (SP)
-
-x0 register is always 0
