@@ -15,16 +15,18 @@ ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR := ${ROOT_DIR}build
 CHIPDB_DIR := ${ROOT_DIR}chipdb
 
-CONSTRAINTS_FILE := ${ROOT_DIR}/picorv32/constraints.xdc
+CONSTRAINTS_FILE := ${ROOT_DIR}/gateware/constraints.xdc
 BIN2HEX_FILE := ${ROOT_DIR}scripts/bin2hex.py
+LINKER_FILE := ${ROOT_DIR}firmware/link.x
 
-VERILOG_SRCS := $(wildcard ${ROOT_DIR}/picorv32/rtl/*.v)
+VERILOG_SRCS := $(wildcard ${ROOT_DIR}/gateware/rtl/*.v)
 
 FIRMWARE_SRCS := $(shell find ${ROOT_DIR}/firmware -type f)
-FIRMWARE_CRATES := $(notdir $(patsubst %/,%,$(wildcard $(ROOT_DIR)/firmware/*/)))
+FIRMWARE_CRATES := led_inc switches pitch
 FIRMWARE_BIN_FILES := $(addprefix ${BUILD_DIR}/,$(addsuffix .bin,${FIRMWARE_CRATES}))
 FIRMWARE_HEX_FILES := $(addprefix ${BUILD_DIR}/,$(addsuffix .hex,${FIRMWARE_CRATES}))
 
+.SECONDARY: ${FIRMWARE_BIN_FILES}
 
 # -- Create Folders --
 
@@ -43,7 +45,6 @@ ${CHIPDB_DIR}/${DBPART}.bba: | ${CHIPDB_DIR}
 		if [ "$$DIE" = xc7z007s ]; then DIE=xc7z010; fi; \
 		python3 ${NEXTPNR_XILINX_DIR}/share/nextpnr/himbaechel/uarch/xilinx/gen/xilinx_gen.py --xray ${PRJXRAY_DB_DIR}/${FAMILY} --device $$DIE --bba ${CHIPDB_DIR}/${DBPART}.bba
 
-
 ${CHIPDB_DIR}/${DBPART}.bin: ${CHIPDB_DIR}/${DBPART}.bba
 	${NEXTPNR_XILINX_DIR}/bin/bbasm -l $< $@
 
@@ -52,7 +53,7 @@ ${CHIPDB_DIR}/${DBPART}.bin: ${CHIPDB_DIR}/${DBPART}.bba
 
 ${BUILD_DIR}/%.bin: ${FIRMWARE_SRCS} | ${BUILD_DIR}
 	cd $(ROOT_DIR)/firmware/$* && \
-		RUSTFLAGS="-C link-arg=-e -C link-arg=_start" \
+		RUSTFLAGS="-C link-arg=-T${LINKER_FILE}" \
 		cargo objcopy --bin=$* --release --target=riscv32i-unknown-none-elf -- -O binary $@
 
 ${BUILD_DIR}/%.hex: ${BUILD_DIR}/%.bin
@@ -78,7 +79,7 @@ build: ${FIRMWARE_HEX_FILES} ${BUILD_DIR}/top.bit
 
 .PHONY: flash
 flash: build
-	openFPGALoader --board ${BOARD} --bitstream ${BUILD_DIR}/top.bit
+	openFPGALoader --board ${BOARD} -f --bitstream ${BUILD_DIR}/top.bit
 
 .PHONY: clean
 clean:
