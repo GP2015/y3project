@@ -79,6 +79,10 @@ build: ${FIRMWARE_HEX_FILES} ${BUILD_DIR}/top.bit
 
 .PHONY: flash
 flash: build
+	openFPGALoader --board ${BOARD} --bitstream ${BUILD_DIR}/top.bit
+
+.PHONY: flashf
+flashf: build
 	openFPGALoader --board ${BOARD} -f --bitstream ${BUILD_DIR}/top.bit
 
 .PHONY: clean
